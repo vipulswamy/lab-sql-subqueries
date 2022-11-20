@@ -118,10 +118,16 @@ from sakila.customer as c
 JOIN sakila.payment as p
 ON c.customer_id = p.customer_id;
  
-
-
-
-
 /*
 Customers who spent more than the average payments.
 */
+select c.customer_id, c.first_name, c.last_name,
+    (case when p.amount > (select AVG(p2.amount) from Payment as p2
+                           where p2.customer_id = c.customer_id)
+                           then 1 end) as Number
+from Customer as c
+inner join Payment as p
+on c.customer_id = p.customer_id
+group by c.customer_id
+order by Number desc;
+
